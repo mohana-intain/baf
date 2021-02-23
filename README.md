@@ -1,8 +1,8 @@
-###BLOCKCHAIN AUTOMATION FRAMEWORK
+### BLOCKCHAIN AUTOMATION FRAMEWORK
 
-###CORDA DEPLOYMENT IN AMAZON WEB SERVICE - ELASTIC KUBERNETES SERVICE CLUSTER
+### CORDA DEPLOYMENT IN AMAZON WEB SERVICE - ELASTIC KUBERNETES SERVICE CLUSTER
 
-###A. STEPS TO SET UP AWS EKS CLUSTER
+### A. STEPS TO SET UP AWS EKS CLUSTER
 
   **TO INSTALL AWS CLI EXECUTE THE FOLLOWING COMMANDS
 				
@@ -50,7 +50,7 @@ Services -> Containers -> Elastic Kubernetes Services ->Under ”Amazon EKS”  
    
      kubectl get pods --all-namespaces
      
-###B. CREATE A NGINX SERVER
+### B. CREATE A NGINX SERVER
 
    **CREATE A FILE nginx.yaml AND PASTE THE BELOW CONTENTS
       
@@ -86,7 +86,7 @@ Services -> Containers -> Elastic Kubernetes Services ->Under ”Amazon EKS”  
       kubectl get pods --all-namespaces
       kubectl exec -it <nginx pod name> -- /bin/bash
 
-###C. SETTING UP VAULT SERVER
+### C. SETTING UP VAULT SERVER
 
     **AFTER LOGGING INTO CONSOLE CHOOSE Services → Compute → EC2 → Launch Instance → Launch Instance 
 
@@ -171,7 +171,7 @@ WantedBy=multi-user.target
         vault status
         vault secrets list
 
-###D. SETTING UP BAF DLT NETWORK
+### D. SETTING UP BAF DLT NETWORK
 
   **MAKE A LOCAL PROJECT FOLDER 
  
