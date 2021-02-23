@@ -170,3 +170,88 @@ WantedBy=multi-user.target
         vault secrets enable -version=1 -path=secret kv
         vault status
         vault secrets list
+
+D. SETTING UP BAF DLT NETWORK
+
+  **MAKE A LOCAL PROJECT FOLDER 
+ 
+  **INSIDE THE PROJECT FOLDER GIT CLONE THE BLOCKCHAIN AUTOMATION FRAMEWORK REPOSITORY FROM HYPERLEDGER LABS OR YOUR OWN VERSION OF THE CLONED REPO.
+
+	git clone git@github.com:sivaramkannan/baf-intain-fork.git
+  **CREATE A NEW BRANCH OUT OF THE CLONED REPO.
+	
+	IF DOING FOR THE FIRST TIME  :    git checkout -b corda-test v0.7.0.0
+
+	OR ELSE                      :    git push -d origin corda-test
+				  git checkout -b corda-test v0.7.0.0
+
+	CHECK USING                 :    git branch
+  **CHANGE DIRECTORY TO BAF-INTAIN-FORK
+  
+  **CREATE A NEW DIRECTORY CALLED     build
+ 
+  **INSIDE THE build DIRECTORY , YOU HAVE TO PLACE 4 FILES.
+         network.yaml
+         gitops (private key)
+	 gitops.pub (public key)
+	 kuberenetes-configuration-file(.yaml)
+	 JAR DIRECTORY (JAR FILES)
+	 
+  **COPY THE FILE FROM /blockchain-automation-framework/platforms/r3-corda/configuration/samples/network-cordav2.yaml AND PLACE IT IN BUILD DIRECTORY AND RENAME IT AS * network.yaml
+  
+  **CHANGE CORDA VERSION TO 4.4 IN network.yaml
+  
+  **UPDATE THE FOLLOWING
+  	
+	CHANGE THE network_services:SECTION
+   - service:
+     type: doorman
+     uri: https://doorman.test.corda.emulya.com:8443
+     certificate: /home/blockchain-automation-framework/platforms/r3-corda/configuration/build/corda/doorman/tls/ambassador.crt
+   - service:
+     type: networkmap
+     uri: https://networkmap.test.corda.emulya.com:8443
+     certificate: /home/blockchain-automation-framework/platforms/r3-corda/configuration/build/corda/networkmap/tls/ambassador.crt
+
+	UNDER THE ORGANISATIONS SECTION, CHANGE 
+    external_url_suffix: test.corda.emulya.com
+
+	UPDATE THE CLOUD PROVIDER, k8s , VAULT SECTION, GITOPS
+  
+   **MAKE A EMPTY FOLDER AS CORDA-TEST
+   
+   	cd blockchain-automation-framework/platforms/r3-corda/releases
+	mkdir corda-test 
+	
+   **MAKE THE FOLLOWING CHANGES
+   
+   	CHANGE THE PRESENT WORKING DIRECTORY TO 
+blockchain-automation-framework/platforms/r3-corda/configuration/roles/create/storageclass/tasks/main.yaml
+
+    	IN THE TASK **CREATE** REPLACE THE CLOUD PROVIDER AS YOUR CLOUD PROVIDER.     Eg.  { cloud_provider }storageclass REPLACED AS awsstorageclass
+	
+	SEARCH IN baf-intain-fork/platforms/r3-corda/ FOR k8s_raw AND CHANGE k8s_raw TO community.kubernetes.k8s
+	
+  **COMMIT THE CHANGES
+  
+  	git commit -a
+	git remote -v
+	git status
+	git push origin corda-test
+	
+  **TO RUN THE PROVISIONING SCRIPTS
+
+	docker run -it -v $(pwd):/home/blockchain-automation-framework/ hyperledgerlabs/baf-build
+	
+  **TO RUN THE NETWORK    
+
+	ansible-playbook platforms/shared/configuration/site.yaml -e "@./build/network.yaml"  -e 'ansible_python_interpreter=/usr/bin/python3'
+
+  **TO RESET THE NETWORK
+	
+	bash reset.sh
+  
+  **TO DEPLOY CORDAPP
+
+	ansible-playbook platforms/r3-corda/configuration/deploy-cordapps.yaml -e "@./build/network.yaml" -e "source_dir='/home/blockchain-automation-framework/build/jar'" -e 'ansible_python_interpreter=/usr/bin/python3'
+
